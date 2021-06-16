@@ -40,4 +40,31 @@ class TradingServiceTest {
 
     }
 
+    @Test
+    void should_call_tradeRepository_createTrade_execute_TradeService_createTrade_and_check_id_same() {
+        //given
+        TradeRepository tradeRepository=new TradeRepository();
+        SpyTradeRepository spyTradeRepository=new SpyTradeRepository();
+        AuditService auditService=mock(AuditService.class);
+        TradingService tradingService=new TradingService(spyTradeRepository,auditService);
+        Trade trade=mock(Trade.class);
+
+        //when
+        Long id1=tradeRepository.createTrade(trade);
+        Long id2=tradingService.createTrade(trade);
+
+        //then
+        assertTrue(spyTradeRepository.hasExecuteCreateTrade);
+        assertEquals(id1,id2);
+    }
+
+    private class SpyTradeRepository extends TradeRepository{
+        boolean hasExecuteCreateTrade=false;
+
+        @Override
+        public Long createTrade(Trade trade) {
+            hasExecuteCreateTrade=true;
+            return 1L;
+        }
+    }
 }
