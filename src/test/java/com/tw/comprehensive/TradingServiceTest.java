@@ -21,6 +21,23 @@ class TradingServiceTest {
         verify(auditService).logNewTrade(trade);
     }
 
+    @Test
+    void should_call_TradingService_findTrade_execute_TradeRepository_findTrade() {
+        //given
+        TradeRepository tradeRepository=new TradeRepository();
+        Long id=1L;
+        TradeRepository mockTradeRepository=mock(TradeRepository.class);
+        AuditService auditService=mock(AuditService.class);
+        TradingService tradingService=new TradingService(mockTradeRepository,auditService);
 
+        //when
+        Trade trade1=tradeRepository.findById(id);
+        when(mockTradeRepository.findById(id)).thenReturn(trade1);
+        Trade trade2=tradingService.findTrade(id);
+
+        //then
+        assertEquals(trade1,trade2);
+
+    }
 
 }
